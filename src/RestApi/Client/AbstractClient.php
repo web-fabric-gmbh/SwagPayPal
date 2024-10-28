@@ -185,6 +185,10 @@ abstract class AbstractClient
             'data' => $data,
         ]);
 
+        if ($exceptionResponse->getStatusCode() === Response::HTTP_SERVICE_UNAVAILABLE) {
+            return new PayPalApiException('PayPal is not available', $message, $exceptionResponse->getStatusCode(), PayPalApiException::ISSUE_NOT_AVAILABLE);
+        }
+
         return new PayPalApiException($error['name'] ?? 'UNCLASSIFIED_ERROR', $message, $exceptionResponse->getStatusCode(), $issue);
     }
 
