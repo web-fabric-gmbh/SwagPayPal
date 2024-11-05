@@ -1,5 +1,6 @@
 # 9.6.4
 - PPI-1016 - Behebt ein Problem, bei dem Sendungsverfolgungsdaten aufgrund zu langer Produktnamen nicht an PayPal übermittelt wurden
+- PPI-1014 - Behebt ein Problem, bei dem Bilder mit Sonderzeichen nicht zu Zettle synchronisiert werden konnten
 
 # 9.6.3
 - PPI-1015 - Behebt ein Problem, bei dem PayPal-Einstellungen in der Administration nicht gespeichert werden konnten
