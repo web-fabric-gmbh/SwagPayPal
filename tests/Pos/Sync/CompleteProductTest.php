@@ -30,6 +30,7 @@ use Swag\PayPal\Pos\Api\Product;
 use Swag\PayPal\Pos\Api\Product\Presentation;
 use Swag\PayPal\Pos\Api\Product\Variant;
 use Swag\PayPal\Pos\Api\Product\VariantOptionDefinitions;
+use Swag\PayPal\Pos\Api\Product\VariantOptionDefinitions\Definition\Property;
 use Swag\PayPal\Pos\Api\Service\Converter\CategoryConverter;
 use Swag\PayPal\Pos\Api\Service\Converter\OptionGroupConverter;
 use Swag\PayPal\Pos\Api\Service\Converter\PresentationConverter;
@@ -106,11 +107,12 @@ class CompleteProductTest extends TestCase
                 new UuidConverter(),
                 new PriceConverter(),
                 new PresentationConverter(),
-                new NullLogger()
+                new NullLogger(),
             ),
             new OptionGroupConverter(),
             new PresentationConverter(),
-            new MetadataGenerator()
+            new MetadataGenerator(),
+            new NullLogger(),
         );
 
         $messageBus = new MessageBusMock();
@@ -219,7 +221,7 @@ class CompleteProductTest extends TestCase
           */
         $productA = $salesChannelProductRepository->createMockEntity($category, $currency, 'productA', ConstantsForTesting::PRODUCT_A_ID);
         $productRepository->addMockEntity($productA);
-        $productB = $salesChannelProductRepository->createMockEntity($category, $currency, 'productB', ConstantsForTesting::PRODUCT_B_ID);
+        $productB = $salesChannelProductRepository->createMockEntity($category, $currency, 'productB', ConstantsForTesting::PRODUCT_B_ID, null, null, 2);
         $productRepository->addMockEntity($productB);
         $variantA = $salesChannelProductRepository->createMockEntity($category, $currency, 'productB_variantA', ConstantsForTesting::VARIANT_A_ID, ConstantsForTesting::PRODUCT_B_ID);
         $productRepository->addMockEntity($variantA);
@@ -230,7 +232,7 @@ class CompleteProductTest extends TestCase
         $productRepository->addMockEntity($productC);
         $productD = $salesChannelProductRepository->createMockEntity($category, $currency, 'productD', ConstantsForTesting::PRODUCT_D_ID);
         $productRepository->addMockEntity($productD);
-        $productE = $salesChannelProductRepository->createMockEntity($category, $currency, 'productE', ConstantsForTesting::PRODUCT_E_ID);
+        $productE = $salesChannelProductRepository->createMockEntity($category, $currency, 'productE', ConstantsForTesting::PRODUCT_E_ID, null, null, 2);
         $productRepository->addMockEntity($productE);
         $variantC = $salesChannelProductRepository->createMockEntity($category, $currency, 'productE_variantC', ConstantsForTesting::VARIANT_C_ID, ConstantsForTesting::PRODUCT_E_ID, $mediaA);
         $productRepository->addMockEntity($variantC);
@@ -357,6 +359,15 @@ class CompleteProductTest extends TestCase
         $isWithoutVariants = \count($variants) === 1 && \current($variants) === $productEntity;
         if (!$isWithoutVariants) {
             $product->setVariantOptionDefinitions(new VariantOptionDefinitions());
+            $product->getVariantOptionDefinitions()?->assign([
+                'definitions' => [[
+                    'name' => '',
+                    'properties' => [
+                        (new Property())->assign(['value' => '']),
+                        (new Property())->assign(['value' => '']),
+                    ],
+                ]],
+            ]);
         }
 
         foreach ($variants as $variantEntity) {
